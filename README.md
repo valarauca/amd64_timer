@@ -13,22 +13,32 @@ This function step by step:
 
 ```nasm
 ldfence		#cheapest fence on x86
-		#this prevents instruction re-ordering
-		#ensures all loads are complete
-		#on x64 this is done for you by the memory model
-		#so this fence is _free_
-		#this fence is here to prevent speculative
-		#execution of rdtsc.
+		    #this prevents instruction re-ordering
+		    #ensures all loads are complete
+		    #on x64 this is done for you by the memory model
+		    #so this fence is _free_
+		    #this fence is here to prevent speculative
+		    #execution of rdtsc.
 
 rdtsc		#puts timestamp counter values into the low
-		#32bits of rdx and rax.
+		    #32bits of rdx and rax.
 
 
 shl rdx, $32	#move the high section, into the high 32bits of
-		#its register
+		    #its register
 
 or rax, rdx	#combine bits
 
 retq		#leave function
 ```
 
+[Reference](http://www.felixcloutier.com/x86/RDTSC.html)
+
+###License
+
+Consider this crate licensed under the MIT.
+
+
+###x86 support
+
+This crate does implement 32bit x86 support, but it is untested.
