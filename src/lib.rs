@@ -5,19 +5,26 @@
 #[inline(never)]
 #[cfg(target_arch = "x86_64")]
 pub fn ticks() -> u64 {
-    let mask = 0x00000000FFFFFFFFu64;
+    let mask = 0xFFFFFFFFu64;
     let high: u64;
     let low: u64;
     unsafe {
         asm!("lfence;rdtsc"
-            : "={rdx}"(high), "={rax}"(low)
+            : "={edx}"(high), "={eax}"(low)
             :
             : "rdx", "rax"
             : "volatile"
         );
     }
-    (mask&high) | (mask&low) 
+    ((mask&high)<<32) | (mask&low)
 }
+#[test]
+fn test_delta() {
+    let x = ticks();
+    let y = ticks();
+    assert!( (y-x) < 1000000);
+}
+
 
 
 #[no_mangle]
