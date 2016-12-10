@@ -1,6 +1,13 @@
 [package]
 name = "amd64_timer"
-version = "0.1.0"
-authors = ["valarauca <codylaeder@gmail.com>"]
+version = "1.0.0"
+authors = ["William Cody Laeder <codylaeder@gmail.com>"]
+repository = "https://github.com/valarauca/amd64_timer.git"
+homepage = "https://github.com/valarauca/amd64_timer"
+description = "Get CPU ticks."
+license = "MIT"
+readme = "README.md"
+documentation = "https://github.com/valarauca/amd64_timer"
+keywords = ["amd64","clock"]
 
-[dependencies]
+
