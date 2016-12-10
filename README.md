@@ -4,9 +4,16 @@ x86/x86_64 Timer
 This is a low level CPU tick count timer. What it returns is the value heald within the processor time stamp counter. This counter is incremented
 every CPU cycle.
 
+---
+####Considerations
+
 When bench marking with this crate you want to assure your CPU is set to 
 fixed multipler. This mean Intel Turbo Boost must be OFF. You can do this
 in the bios.
+
+This create requires Rust Nightly (as it uses `asm!` macro)
+
+---
 
 ####Functions
 
@@ -17,6 +24,7 @@ fn tick() -> u64;
 This returns the number of CPU cycles that have passed since the last time
 the CPU counter has rolled over. OR Power one.
 
+---
 
 ####In Depth Documentation
 
@@ -48,10 +56,13 @@ retq		#leave function
 
 [Reference](http://www.felixcloutier.com/x86/RDTSC.html)
 
+---
+
 ###License
 
 Consider this crate licensed under the MIT.
 
+---
 
 ###x86 support
 
