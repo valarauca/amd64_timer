@@ -1,0 +1,34 @@
+x86/x86_64 Timer
+---
+
+This is a low level CPU tick count timer. What it returns is the value heald within the processor time stamp counter. This counter is incremented
+every CPU cycle.
+
+When bench marking with this crate you want to assure your CPU is set to 
+fixed multipler. This mean Intel Turbo Boost must be OFF. You can do this
+in the bios.
+
+
+This function step by step:
+
+```nasm
+ldfence		#cheapest fence on x86
+		#this prevents instruction re-ordering
+		#ensures all loads are complete
+		#on x64 this is done for you by the memory model
+		#so this fence is _free_
+		#this fence is here to prevent speculative
+		#execution of rdtsc.
+
+rdtsc		#puts timestamp counter values into the low
+		#32bits of rdx and rax.
+
+
+shl rdx, $32	#move the high section, into the high 32bits of
+		#its register
+
+or rax, rdx	#combine bits
+
+retq		#leave function
+```
+
