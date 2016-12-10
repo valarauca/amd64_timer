@@ -39,7 +39,7 @@ rdtsc		#puts timestamp counter values into the low
 
 
 shl rdx, $32	#move the high section, into the high 32bits of
-		    #its register
+		        #its register
 
 or rax, rdx	#combine bits
 
