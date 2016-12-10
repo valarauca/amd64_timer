@@ -8,10 +8,24 @@ When bench marking with this crate you want to assure your CPU is set to
 fixed multipler. This mean Intel Turbo Boost must be OFF. You can do this
 in the bios.
 
+####Functions
+
+```rust
+fn tick() -> u64;
+```
+
+This returns the number of CPU cycles that have passed since the last time
+the CPU counter has rolled over. OR Power one.
+
+
+####In Depth Documentation
+
 
 This function step by step:
 
 ```nasm
+#Intel Syntax
+
 ldfence		#cheapest fence on x86
 		    #this prevents instruction re-ordering
 		    #ensures all loads are complete
