@@ -1,17 +1,16 @@
 x86/x86_64 Timer
 ---
 
-This is a low level CPU tick count timer. What it returns is the value heald within the processor time stamp counter. This counter is incremented
-every CPU cycle.
+This is a low level CPU cycle count timer. What it returns is the value held within the processor time stamp counter. This counter is incremented every CPU cycle.
 
 ---
 ####Considerations
 
-When bench marking with this crate you want to assure your CPU is set to 
+When bench marking with this crate you want to assure your CPU is set to a 
 fixed multipler. This mean Intel Turbo Boost must be OFF. You can do this
-in the bios.
+in via the bios.
 
-This create requires Rust Nightly (as it uses `asm!` macro)
+This crate requires Rust Nightly (as it uses `asm!` macro)
 
 ---
 
