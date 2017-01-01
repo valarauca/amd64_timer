@@ -17,11 +17,11 @@ This crate requires Rust Nightly (as it uses `asm!` macro)
 ####Functions
 
 ```rust
-fn tick() -> u64;
+fn ticks() -> u64;
 ```
 
 This returns the number of CPU cycles that have passed since the last time
-the CPU counter has rolled over. OR Power one.
+the CPU counter has rolled over. OR Power on.
 
 ---
 
