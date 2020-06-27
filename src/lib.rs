@@ -1,7 +1,7 @@
-#![no_std]
-#![feature(llvm_asm)]
+#![cfg_attr(not(feature = "std"), no_std)]
+#![cfg_attr(not(feature = "OLD_ASM"), feature(llvm_asm))]
+#![cfg_attr(feature = "OLD_ASM", feature(asm))]
 
-#[no_mangle]
 #[inline(never)]
 #[cfg(target_arch = "x86_64")]
 pub fn ticks() -> u64 {
@@ -9,12 +9,25 @@ pub fn ticks() -> u64 {
     let high: u64;
     let low: u64;
     unsafe {
-        llvm_asm!("lfence;rdtsc"
-            : "={edx}"(high), "={eax}"(low)
-            :
-            : "rdx", "rax"
-            : "volatile"
-        );
+        #[cfg(not(feature = "OLD_ASM"))]
+        {
+            llvm_asm!("lfence;rdtsc"
+                : "={edx}"(high), "={eax}"(low)
+                :
+                : "rdx", "rax"
+                : "volatile"
+            );
+        }
+
+        #[cfg(feature = "OLD_ASM")]
+        {
+            asm!("lfence;rdtsc"
+                : "={edx}"(high), "={eax}"(low)
+                :
+                : "rdx", "rax"
+                : "volatile"
+            );
+        }
     }
     ((high) << 32) | (mask & low)
 }
@@ -32,7 +45,6 @@ fn test_delta() {
 ///
 /// [See this
 /// citation](https://github.com/golang/go/blob/bf9ad7080d0a22acf502a60d8bc6ebbc4f5340ef/src/runtime/asm_amd64.s#L112)
-#[no_mangle]
 #[inline(never)]
 #[cfg(target_arch = "x86_64")]
 pub fn ticks_amd() -> u64 {
@@ -40,12 +52,24 @@ pub fn ticks_amd() -> u64 {
     let high: u64;
     let low: u64;
     unsafe {
-        llvm_asm!("mfence;rdtsc"
-            : "={edx}"(high), "={eax}"(low)
-            :
-            : "rdx", "rax"
-            : "volatile"
-        );
+        #[cfg(not(feature = "OLD_ASM"))]
+        {
+            llvm_asm!("mfence;rdtsc"
+                : "={edx}"(high), "={eax}"(low)
+                :
+                : "rdx", "rax"
+                : "volatile"
+            );
+        }
+        #[cfg(feature = "OLD_ASM")]
+        {
+            asm!("mfence;rdtsc"
+                : "={edx}"(high), "={eax}"(low)
+                :
+                : "rdx", "rax"
+                : "volatile"
+            );
+        }
     }
     ((high) << 32) | (mask & low)
 }
@@ -60,7 +84,6 @@ pub fn ticks_amd() -> u64 {
 /// instruction.
 ///
 /// Be aware that this instruction maybe masked by the OS, or Hypervisor.
-#[no_mangle]
 #[inline(never)]
 #[cfg(target_arch = "x86_64")]
 pub fn ticks_modern() -> u64 {
@@ -68,29 +91,52 @@ pub fn ticks_modern() -> u64 {
     let high: u64;
     let low: u64;
     unsafe {
-        llvm_asm!("rdtscp"
-            : "={edx}"(high), "={eax}"(low)
-            :
-            : "rdx", "rax"
-            : "volatile"
-        );
+        #[cfg(not(feature = "OLD_ASM"))]
+        {
+            llvm_asm!("rdtscp"
+                : "={edx}"(high), "={eax}"(low)
+                :
+                : "rdx", "rax"
+                : "volatile"
+            );
+        }
+        #[cfg(feature = "OLD_ASM")]
+        {
+            asm!("rdtscp"
+                : "={edx}"(high), "={eax}"(low)
+                :
+                : "rdx", "rax"
+                : "volatile"
+            );
+        }
     }
     ((high) << 32) | (mask & low)
 }
 
-#[no_mangle]
 #[inline(never)]
 #[cfg(target_arch = "x86")]
 pub fn ticks() -> u64 {
     let high: u32;
     let low: u32;
     unsafe {
-        llvm_asm!("lfence;rdtsc"
-            : "={edx}"(high), "={eax}"(low)
-            :
-            : "edx", "eax"
-            : "volatile"
-        );
+        #[cfg(not(feature = "OLD_ASM"))]
+        {
+            llvm_asm!("lfence;rdtsc"
+                : "={edx}"(high), "={eax}"(low)
+                :
+                : "edx", "eax"
+                : "volatile"
+            );
+        }
+        #[cfg(feature = "OLD_ASM")]
+        {
+            asm!("rdtscp"
+                : "={edx}"(high), "={eax}"(low)
+                :
+                : "rdx", "rax"
+                : "volatile"
+            );
+        }
     }
     let high_val = (high as u64) << 32;
     let low_val = low as u64;
@@ -104,19 +150,30 @@ pub fn ticks() -> u64 {
 ///
 /// [See this
 /// citation](https://github.com/golang/go/blob/bf9ad7080d0a22acf502a60d8bc6ebbc4f5340ef/src/runtime/asm_amd64.s#L112)
-#[no_mangle]
 #[inline(never)]
 #[cfg(target_arch = "x86")]
 pub fn ticks_amd() -> u64 {
     let high: u32;
     let low: u32;
     unsafe {
-        llvm_asm!("mfence;rdtsc"
-            : "={edx}"(high), "={eax}"(low)
-            :
-            : "edx", "eax"
-            : "volatile"
-        );
+        #[cfg(not(feature = "OLD_ASM"))]
+        {
+            llvm_asm!("mfence;rdtsc"
+                : "={edx}"(high), "={eax}"(low)
+                :
+                : "edx", "eax"
+                : "volatile"
+            );
+        }
+        #[cfg(feature = "OLD_ASM")]
+        {
+            asm!("mfence;rdtsc"
+                : "={edx}"(high), "={eax}"(low)
+                :
+                : "edx", "eax"
+                : "volatile"
+            );
+        }
     }
     let high_val = (high as u64) << 32;
     let low_val = low as u64;
@@ -133,7 +190,6 @@ pub fn ticks_amd() -> u64 {
 /// instruction.
 ///
 /// Be aware that this instruction maybe masked by the OS, or Hypervisor.
-#[no_mangle]
 #[inline(never)]
 #[cfg(target_arch = "x86")]
 pub fn ticks_modern() -> u64 {
@@ -141,12 +197,24 @@ pub fn ticks_modern() -> u64 {
     let high: u32;
     let low: u32;
     unsafe {
-        llvm_asm!("rdtscp"
-            : "={edx}"(high), "={eax}"(low)
-            :
-            : "edx", "eax"
-            : "volatile"
-        );
+        #[cfg(not(feature = "OLD_ASM"))]
+        {
+            llvm_asm!("rdtscp"
+                : "={edx}"(high), "={eax}"(low)
+                :
+                : "edx", "eax"
+                : "volatile"
+            );
+        }
+        #[cfg(feature = "OLD_ASM")]
+        {
+            asm!("rdtscp"
+                : "={edx}"(high), "={eax}"(low)
+                :
+                : "edx", "eax"
+                : "volatile"
+            );
+        }
     }
     let high_val = (high as u64) << 32;
     let low_val = low as u64;
