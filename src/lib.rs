@@ -1,6 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
-#![cfg_attr(not(feature = "OLD_ASM"), feature(llvm_asm))]
+#![cfg_attr(feature = "LLVM_ASM", feature(llvm_asm))]
 #![cfg_attr(feature = "OLD_ASM", feature(asm))]
+
 
 #[inline(never)]
 #[cfg(target_arch = "x86_64")]
@@ -9,7 +10,7 @@ pub fn ticks() -> u64 {
     let high: u64;
     let low: u64;
     unsafe {
-        #[cfg(not(feature = "OLD_ASM"))]
+        #[cfg(feature = "LLVM_ASM")]
         {
             llvm_asm!("lfence;rdtsc"
                 : "={edx}"(high), "={eax}"(low)
@@ -18,7 +19,6 @@ pub fn ticks() -> u64 {
                 : "volatile"
             );
         }
-
         #[cfg(feature = "OLD_ASM")]
         {
             asm!("lfence;rdtsc"
@@ -27,6 +27,12 @@ pub fn ticks() -> u64 {
                 : "rdx", "rax"
                 : "volatile"
             );
+        }
+        #[cfg(all(not(feature = "LLVM_ASM"), not(feature = "OLD_ASM")))]
+        {
+            core::arch::asm!("lfence;rdtsc",
+            out("edx") high,
+            out("eax") low)
         }
     }
     ((high) << 32) | (mask & low)
@@ -52,7 +58,7 @@ pub fn ticks_amd() -> u64 {
     let high: u64;
     let low: u64;
     unsafe {
-        #[cfg(not(feature = "OLD_ASM"))]
+        #[cfg(feature = "LLVM_ASM")]
         {
             llvm_asm!("mfence;rdtsc"
                 : "={edx}"(high), "={eax}"(low)
@@ -69,6 +75,12 @@ pub fn ticks_amd() -> u64 {
                 : "rdx", "rax"
                 : "volatile"
             );
+        }
+        #[cfg(all(not(feature = "LLVM_ASM"), not(feature = "OLD_ASM")))]
+        {
+            core::arch::asm!("mfence;rdtsc",
+            out("edx") high,
+            out("eax") low)
         }
     }
     ((high) << 32) | (mask & low)
@@ -91,7 +103,7 @@ pub fn ticks_modern() -> u64 {
     let high: u64;
     let low: u64;
     unsafe {
-        #[cfg(not(feature = "OLD_ASM"))]
+        #[cfg(feature = "LLVM_ASM")]
         {
             llvm_asm!("rdtscp"
                 : "={edx}"(high), "={eax}"(low)
@@ -109,6 +121,12 @@ pub fn ticks_modern() -> u64 {
                 : "volatile"
             );
         }
+        #[cfg(all(not(feature = "LLVM_ASM"), not(feature = "OLD_ASM")))]
+        {
+            core::arch::asm!("rdtscp",
+            out("edx") high,
+            out("eax") low)
+        }
     }
     ((high) << 32) | (mask & low)
 }
@@ -119,7 +137,7 @@ pub fn ticks() -> u64 {
     let high: u32;
     let low: u32;
     unsafe {
-        #[cfg(not(feature = "OLD_ASM"))]
+        #[cfg(feature = "LLVM_ASM")]
         {
             llvm_asm!("lfence;rdtsc"
                 : "={edx}"(high), "={eax}"(low)
@@ -136,6 +154,12 @@ pub fn ticks() -> u64 {
                 : "rdx", "rax"
                 : "volatile"
             );
+        }
+        #[cfg(all(not(feature = "LLVM_ASM"), not(feature = "OLD_ASM")))]
+        {
+            core::arch::asm!("rdtscp",
+            out("edx") high,
+            out("eax") low)
         }
     }
     let high_val = (high as u64) << 32;
@@ -156,7 +180,7 @@ pub fn ticks_amd() -> u64 {
     let high: u32;
     let low: u32;
     unsafe {
-        #[cfg(not(feature = "OLD_ASM"))]
+        #[cfg(feature = "LLVM_ASM")]
         {
             llvm_asm!("mfence;rdtsc"
                 : "={edx}"(high), "={eax}"(low)
@@ -173,6 +197,12 @@ pub fn ticks_amd() -> u64 {
                 : "edx", "eax"
                 : "volatile"
             );
+        }
+        #[cfg(all(not(feature = "LLVM_ASM"), not(feature = "OLD_ASM")))]
+        {
+            core::arch::asm!("mfence;rdtsc",
+            out("edx") high,
+            out("eax") low)
         }
     }
     let high_val = (high as u64) << 32;
@@ -197,7 +227,7 @@ pub fn ticks_modern() -> u64 {
     let high: u32;
     let low: u32;
     unsafe {
-        #[cfg(not(feature = "OLD_ASM"))]
+        #[cfg(feature = "LLVM_ASM")]
         {
             llvm_asm!("rdtscp"
                 : "={edx}"(high), "={eax}"(low)
@@ -214,6 +244,12 @@ pub fn ticks_modern() -> u64 {
                 : "edx", "eax"
                 : "volatile"
             );
+        }
+        #[cfg(all(not(feature = "LLVM_ASM"), not(feature = "OLD_ASM")))]
+        {
+            core::arch::asm!("rdtscp",
+            out("edx") high,
+            out("eax") low)
         }
     }
     let high_val = (high as u64) << 32;
